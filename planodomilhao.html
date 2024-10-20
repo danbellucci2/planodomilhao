@@ -1,0 +1,1030 @@
+<html><head><base href="https://websim.example.com/family-budget-advanced/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejador Financeiro Familiar Avançado</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+      :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #50c878;
+        --background-color: #f8f9fa;
+        --text-color: #333333;
+        --card-bg-color: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+      }
+    
+      body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background-image: linear-gradient(135deg, var(--background-color) 0%, #e6e9f0 100%);
+        background-attachment: fixed;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    
+      .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--background-color);
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 0.5rem;
+      }
+    
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+    
+      .site-header h1 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+    
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 95%;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+    
+      .form-section {
+        position: relative;
+        transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin-bottom 0.3s ease-out;
+        max-height: 1000px;
+        opacity: 1;
+        overflow: hidden;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+    
+      .form-section.minimized {
+        max-height: 40px;
+        opacity: 0.7;
+        margin-bottom: 10px;
+      }
+    
+      .minimize-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+    
+      .minimize-button:hover {
+        transform: scale(1.1);
+      }
+    
+      h1 {
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+    
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+      }
+    
+      .top-buttons {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem;
+      }
+    
+      #loginBtn {
+        display: none;
+      }
+    
+      #themeToggle, #languageToggle {
+        background-color: var(--secondary-color);
+        color: white;
+      }
+    
+      form {
+        width: 100%;
+      }
+    
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+    
+      .form-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+    
+      #familyMembersSection {
+        margin-bottom: 1rem;
+      }
+    
+      .form-section {
+        padding: 2rem;
+        margin-bottom: 2rem;
+        background-color: var(--card-bg-color);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        transition: all 0.3s ease;
+      }
+    
+      .form-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px var(--shadow-color);
+      }
+    
+      label {
+        display: inline-block;
+        margin-bottom: 0.3rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-color);
+        width: 50%;
+      }
+    
+      input[type="number"], input[type="text"], select {
+        width: 80%;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 2px solid #bdc3c7;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+    
+      input[type="number"]:focus, input[type="text"]:focus, select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        outline: none;
+        transform: scale(1.02);
+      }
+    
+      button {
+        background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+    
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+      }
+    
+      #result {
+        width: 100%;
+        margin-top: 2rem;
+        padding: 2rem;
+        background-color: #e8f4f8;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        display: none;
+      }
+    
+      #chartContainer {
+        width: 100%;
+        height: 400px;
+        grid-column: span 2;
+      }
+    
+      .dynamic-inputs {
+        max-height: 150px;
+        overflow-y: auto;
+      }
+    
+      .member-input {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 0.3rem;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+    
+      .member-input input {
+        width: 90%;
+      }
+    
+      .remove-member {
+        background: none;
+        border: none;
+        color: #e74c3c;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+    
+      .remove-member:hover {
+        color: #c0392b;
+        transform: scale(1.2);
+      }
+    
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    
+      .form-section, #result {
+        animation: fadeInUp 0.5s ease-out;
+      }
+    
+      #monthlyTotals {
+        width: 100%;
+        border-collapse: collapse;
+      }
+    
+      #monthlyTotals th, #monthlyTotals td {
+        border: 1px solid #bdc3c7;
+        padding: 0.5rem;
+        text-align: left;
+      }
+    
+      #monthlyTotals th {
+        background-color: var(--primary-color);
+        color: white;
+      }
+    
+      .popup {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+      }
+    
+      .popup-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+      }
+    
+      .popup-content button img {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+    
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+    
+        h1 {
+          font-size: 2rem;
+        }
+    
+        h2 {
+          font-size: 1.2rem;
+        }
+    
+        input, select {
+          font-size: 0.9rem;
+        }
+    
+        .member-input {
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
+        }
+    
+        .member-input input {
+          width: 100%;
+        }
+    
+        .dynamic-inputs {
+          max-height: 300px; 
+          overflow-y: auto;
+        }
+      }
+    
+      body.dark-mode {
+        --background-color: #121212;
+        --text-color: #e0e0e0;
+        --card-bg-color: #1e1e1e;
+        --shadow-color: rgba(255, 255, 255, 0.1);
+      }
+    
+      body.dark-mode .site-header {
+        background-color: var(--card-bg-color);
+      }
+    
+      body.dark-mode .container {
+        background: rgba(30, 30, 30, 0.8);
+      }
+    
+      body.dark-mode input, body.dark-mode select {
+        background-color: #2c2c2c;
+        color: #e0e0e0;
+        border-color: #444;
+      }
+    
+      body.dark-mode label {
+        color: #cccccc;
+      }
+    
+      .guide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    
+      #guideContent {
+        transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+        max-height: 1000px;
+        opacity: 1;
+        overflow: hidden;
+      }
+    
+      #guideContent.minimized {
+        max-height: 0;
+        opacity: 0;
+      }
+    
+      .main-content {
+        display: flex;
+        gap: 1rem;
+      }
+    
+      .left-column, .right-column {
+        flex: 1;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    </head>
+    <body>
+      <header class="site-header">
+        <div class="header-content">
+          <h1 data-translate="title">Planejador Financeiro Familiar Avançado</h1>
+          <div class="top-buttons">
+            <button id="loginBtn">Login</button>
+            <button id="themeToggle">🌙</button>
+            <button id="languageToggle">🌐 PT</button>
+          </div>
+        </div>
+      </header>
+      <div class="container">
+        <div class="form-section" id="explanatoryGuide">
+          <button class="minimize-button">-</button>
+          <div class="guide-header">
+            <h2 data-translate="guideTitle">Guia de Uso</h2>
+          </div>
+          <div id="guideContent">
+            <p data-translate="guideText">Bem-vindo ao Planejador Financeiro Familiar Avançado! Este site ajuda você a planejar suas finanças familiares e alcançar seus objetivos financeiros. Siga estas etapas:</p>
+            <ol>
+              <li data-translate="guideStep1">Insira os membros da família, seus salários e gastos individuais</li>
+              <li data-translate="guideStep2">Preencha os gastos fixos familiares</li>
+              <li data-translate="guideStep3">Adicione outras receitas e retornos de investimentos</li>
+              <li data-translate="guideStep4">Defina seu objetivo financeiro e período de projeção</li>
+              <li data-translate="guideStep5">Clique em "Calcular Projeção" para ver os resultados</li>
+            </ol>
+          </div>
+        </div>
+    
+        <form>
+          <div class="main-content">
+            <div class="left-column">
+              <div class="form-section">
+                <button class="minimize-button">-</button>
+                <h2 data-translate="fixedExpenses">Gastos Fixos Familiares</h2>
+                <div class="form-row-section">
+                  <label for="rent" data-translate="rent">Aluguel/Financiamento:</label>
+                  <input type="number" id="rent" placeholder="Insira o valor do aluguel/financiamento" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="water" data-translate="water">Água:</label>
+                  <input type="number" id="water" placeholder="Insira o valor da conta de água" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="electricity" data-translate="electricity">Luz:</label>
+                  <input type="number" id="electricity" placeholder="Insira o valor da conta de luz" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="phone" data-translate="phone">Telefone:</label>
+                  <input type="number" id="phone" placeholder="Insira o valor da conta de telefone" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="internet" data-translate="internet">Internet:</label>
+                  <input type="number" id="internet" placeholder="Insira o valor da conta de internet" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="groceries" data-translate="groceries">Supermercado:</label>
+                  <input type="number" id="groceries" placeholder="Insira o valor gasto com supermercado" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="fuel" data-translate="fuel">Combustível:</label>
+                  <input type="number" id="fuel" placeholder="Insira o valor gasto com combustível" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="medicine" data-translate="medicine">Remédios:</label>
+                  <input type="number" id="medicine" placeholder="Insira o valor gasto com remédios" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="otherExpenses" data-translate="otherExpenses">Outras Despesas:</label>
+                  <input type="number" id="otherExpenses" placeholder="Insira o valor de outras despesas" step="0.01" min="0" required>
+                </div>
+              </div>
+            </div>
+    
+            <div class="right-column">
+              <div class="form-section" id="revenueSection">
+                <button class="minimize-button">-</button>
+                <h2 data-translate="revenue">Receitas</h2>
+                <div class="form-row-section">
+                  <label for="salary" data-translate="salary">Salário:</label>
+                  <input type="number" id="salary" data-translate="salaryPlaceholder" placeholder="Insira o salário mensal" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="annualBonus" data-translate="annualBonus">Bônus Anuais:</label>
+                  <input type="number" id="annualBonus" data-translate="annualBonusPlaceholder" placeholder="Insira o valor de bônus anuais" step="0.01" min="0" required>
+                </div>
+                <div class="form-row-section">
+                  <label for="otherRevenue" data-translate="otherRevenue">Outras Receitas:</label>
+                  <input type="number" id="otherRevenue" data-translate="otherRevenuePlaceholder" placeholder="Insira outras receitas mensais" step="0.01" min="0" required>
+                </div>
+    
+                <div class="form-section">
+                  <button class="minimize-button">-</button>
+                  <h2 data-translate="financialGoal">Objetivo Financeiro</h2>
+                  <div class="form-row-section">
+                    <label for="financialGoal" data-translate="goalValue">Valor do Objetivo:</label>
+                    <input type="number" id="financialGoal" placeholder="Insira o valor do objetivo financeiro" step="0.01" min="0" required>
+                  </div>
+                  <div class="form-row-section">
+                    <label for="monthlyExpectedReturn" data-translate="monthlyExpectedReturn">Rentabilidade Mensal Esperada (%):</label>
+                    <input type="number" id="monthlyExpectedReturn" placeholder="Insira a rentabilidade mensal esperada" step="0.01" min="0" max="100" required>
+                  </div>
+                </div>
+    
+                <div class="form-section">
+                  <button class="minimize-button">-</button>
+                  <h2 data-translate="projectionPeriod">Período de Projeção</h2>
+                  <select id="projectionPeriod">
+                    <option value="12">1 ano</option>
+                    <option value="60" selected>5 anos</option>
+                    <option value="120">10 anos</option>
+                    <option value="240">20 anos</option>
+                    <option value="360">30 anos</option>
+                  </select>
+                  <button type="submit" data-translate="calculate">Calcular Projeção</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+    
+        <div id="result">
+          <h2 data-translate="result">Resultado da Projeção</h2>
+          <p><span data-translate="projectedBalance">Saldo projetado após</span> <span id="projectionMonths"></span> <span data-translate="months">meses</span>: <strong id="projectedBalance"></strong></p>
+          <p><span data-translate="totalInvestmentReturn">Total de rendimentos de investimentos</span>: <strong id="totalInvestmentReturn"></strong></p>
+          <div id="chartContainer">
+            <canvas id="chart"></canvas>
+          </div>
+          <p id="monthlySavingsResult"></p>
+          <div class="form-section">
+            <button class="minimize-button">-</button>
+            <h2 data-translate="monthlySummary">Resumo Mensal</h2>
+            <table id="monthlyTotals">
+              <tr>
+                <th data-translate="totalSalary">Total de Salários</th>
+                <td id="totalSalary"></td>
+              </tr>
+              <tr>
+                <th data-translate="totalOtherIncome">Outras Receitas</th>
+                <td id="totalOtherIncome"></td>
+              </tr>
+              <tr>
+                <th data-translate="totalMonthlyExpenses">Total de Despesas Mensais</th>
+                <td id="totalMonthlyExpenses"></td>
+              </tr>
+              <tr>
+                <th data-translate="monthlyBalance">Saldo Mensal</th>
+                <td id="monthlyBalance"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    
+      <div id="loginPopup" class="popup">
+        <div class="popup-content">
+          <h2 data-translate="login">Login</h2>
+          <button onclick="login('google')"><img src="google-logo.png" alt="Google"> <span data-translate="loginWith">Login com</span> Google</button>
+          <button onclick="login('facebook')"><img src="facebook-logo.png" alt="Facebook"> <span data-translate="loginWith">Login com</span> Facebook</button>
+          <button onclick="login('instagram')"><img src="instagram-logo.png" alt="Instagram"> <span data-translate="loginWith">Login com</span> Instagram</button>
+          <button onclick="closeLoginPopup()"><span data-translate="close">Fechar</span></button>
+        </div>
+      </div>
+    
+      <script>
+        function calculateTimeToReachGoal(goalAmount, monthlyBalance, monthlyExpectedReturn) {
+          let balance = 0;
+          let months = 0;
+          while (balance < goalAmount && months < 1200) {
+            balance += monthlyBalance;
+            balance *= (1 + monthlyExpectedReturn);
+            months++;
+          }
+          return months;
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+          const form = document.querySelector('form');
+          const result = document.getElementById('result');
+          const projectedBalance = document.getElementById('projectedBalance');
+          const projectionMonths = document.getElementById('projectionMonths');
+          const totalInvestmentReturn = document.getElementById('totalInvestmentReturn');
+          const monthlyBalanceElement = document.getElementById('monthlyBalance');
+          let chart;
+    
+          if (form) {
+            form.addEventListener('submit', function(e) {
+              e.preventDefault();
+              
+              const salary = parseFloat(document.getElementById('salary')?.value || 0);
+              const annualBonus = parseFloat(document.getElementById('annualBonus')?.value || 0);
+              const otherRevenue = parseFloat(document.getElementById('otherRevenue')?.value || 0);
+    
+              const fixedExpenses = {
+                rent: parseFloat(document.getElementById('rent')?.value || 0),
+                water: parseFloat(document.getElementById('water')?.value || 0),
+                electricity: parseFloat(document.getElementById('electricity')?.value || 0),
+                phone: parseFloat(document.getElementById('phone')?.value || 0),
+                internet: parseFloat(document.getElementById('internet')?.value || 0),
+                groceries: parseFloat(document.getElementById('groceries')?.value || 0),
+                fuel: parseFloat(document.getElementById('fuel')?.value || 0),
+                medicine: parseFloat(document.getElementById('medicine')?.value || 0),
+                otherExpenses: parseFloat(document.getElementById('otherExpenses')?.value || 0)
+              };
+    
+              const monthlyExpectedReturn = parseFloat(document.getElementById('monthlyExpectedReturn').value || 0) / 100;
+              const projectionPeriod = parseInt(document.getElementById('projectionPeriod')?.value || 0);
+    
+              const totalFixedExpenses = Object.values(fixedExpenses).reduce((sum, expense) => sum + expense, 0);
+              const monthlyRevenue = salary + (annualBonus / 12) + otherRevenue;
+              const monthlyBalance = monthlyRevenue - totalFixedExpenses;
+    
+              if (document.getElementById('totalSalary')) {
+                document.getElementById('totalSalary').textContent = `R$ ${salary.toFixed(2)}`;
+              }
+              if (document.getElementById('totalOtherIncome')) {
+                document.getElementById('totalOtherIncome').textContent = `R$ ${(otherRevenue + (annualBonus / 12)).toFixed(2)}`;
+              }
+              if (document.getElementById('totalMonthlyExpenses')) {
+                document.getElementById('totalMonthlyExpenses').textContent = `R$ ${totalFixedExpenses.toFixed(2)}`;
+              }
+    
+              if (monthlyBalanceElement) {
+                monthlyBalanceElement.textContent = `R$ ${monthlyBalance.toFixed(2)}`;
+              }
+    
+              let accumulatedBalance = 0;
+              let totalInvestmentReturns = 0;
+              const monthlyData = [];
+    
+              for (let i = 0; i < projectionPeriod; i++) {
+                const investmentReturnThisMonth = accumulatedBalance * monthlyExpectedReturn;
+                accumulatedBalance += monthlyBalance + investmentReturnThisMonth;
+                totalInvestmentReturns += investmentReturnThisMonth;
+                monthlyData.push(accumulatedBalance);
+              }
+    
+              const financialGoal = parseFloat(document.getElementById('financialGoal')?.value || 0);
+              const timeToReachGoal = calculateTimeToReachGoal(financialGoal, monthlyBalance, monthlyExpectedReturn);
+    
+              if (projectedBalance) {
+                projectedBalance.textContent = `R$ ${accumulatedBalance.toFixed(2)}`;
+              }
+              if (projectionMonths) {
+                projectionMonths.textContent = projectionPeriod;
+              }
+              if (totalInvestmentReturn) {
+                totalInvestmentReturn.textContent = `R$ ${totalInvestmentReturns.toFixed(2)}`;
+              }
+              
+              if (result) {
+                result.style.display = 'block';
+                result.scrollIntoView({ behavior: 'smooth' });
+              }
+    
+              createChart(fixedExpenses, monthlyData, projectionPeriod, financialGoal, timeToReachGoal);
+            });
+          }
+    
+          const languages = ['PT', 'EN', 'ES'];
+          let currentLanguage = 'PT';
+    
+          const translations = {
+            PT: {
+              title: "Planejador Financeiro Familiar Avançado",
+              revenue: "Receitas",
+              salary: "Salário:",
+              annualBonus: "Bônus Anuais:",
+              otherRevenue: "Outras Receitas:",
+              salaryPlaceholder: "Insira o salário mensal",
+              annualBonusPlaceholder: "Insira o valor de bônus anuais",
+              otherRevenuePlaceholder: "Insira outras receitas mensais",
+              fixedExpenses: "Gastos Fixos Familiares",
+              rent: "Aluguel/Financiamento",
+              water: "Água",
+              electricity: "Luz",
+              phone: "Telefone",
+              internet: "Internet",
+              groceries: "Supermercado",
+              fuel: "Combustível",
+              medicine: "Remédios",
+              otherExpenses: "Outras Despesas",
+              financialGoal: "Objetivo Financeiro",
+              goalValue: "Valor do Objetivo",
+              monthlyExpectedReturn: "Rentabilidade Mensal Esperada (%):",
+              monthlyExpectedReturnPlaceholder: "Insira a rentabilidade mensal esperada",
+              projectionPeriod: "Período de Projeção",
+              calculate: "Calcular Projeção",
+              result: "Resultado da Projeção",
+              projectedBalance: "Saldo projetado após",
+              months: "meses",
+              totalInvestmentReturn: "Total de rendimentos de investimentos",
+              monthlySummary: "Resumo Mensal",
+              totalSalary: "Total de Salários",
+              totalOtherIncome: "Outras Receitas",
+              totalMonthlyExpenses: "Total de Despesas Mensais",
+              monthlyBalance: "Saldo Mensal",
+              login: "Login",
+              loginWith: "Login com",
+              close: "Fechar",
+              guideTitle: "Guia de Uso",
+              guideText: "Bem-vindo ao Planejador Financeiro Familiar Avançado! Este site ajuda você a planejar suas finanças familiares e alcançar seus objetivos financeiros. Siga estas etapas:",
+              guideStep1: "Insira os membros da família, seus salários e gastos individuais",
+              guideStep2: "Preencha os gastos fixos familiares",
+              guideStep3: "Adicione outras receitas e retornos de investimentos",
+              guideStep4: "Defina seu objetivo financeiro e período de projeção",
+              guideStep5: "Clique em \"Calcular Projeção\" para ver os resultados",
+              rentPlaceholder: "Insira o valor do aluguel/financiamento",
+              waterPlaceholder: "Insira o valor da conta de água",
+              electricityPlaceholder: "Insira o valor da conta de luz",
+              phonePlaceholder: "Insira o valor da conta de telefone",
+              internetPlaceholder: "Insira o valor da conta de internet",
+              groceriesPlaceholder: "Insira o valor gasto com supermercado",
+              fuelPlaceholder: "Insira o valor gasto com combustível",
+              medicinePlaceholder: "Insira o valor gasto com remédios",
+              otherExpensesPlaceholder: "Insira o valor de outras despesas",
+              financialGoalPlaceholder: "Insira o valor do objetivo financeiro",
+            },
+            EN: {
+              title: "Advanced Family Financial Planner",
+              revenue: "Revenue",
+              salary: "Salary:",
+              annualBonus: "Annual Bonus:",
+              otherRevenue: "Other Revenue:",
+              salaryPlaceholder: "Enter monthly salary",
+              annualBonusPlaceholder: "Enter annual bonus amount",
+              otherRevenuePlaceholder: "Enter other monthly revenue",
+              fixedExpenses: "Fixed Family Expenses",
+              rent: "Rent/Mortgage",
+              water: "Water",
+              electricity: "Electricity",
+              phone: "Phone",
+              internet: "Internet",
+              groceries: "Groceries",
+              fuel: "Fuel",
+              medicine: "Medicine",
+              otherExpenses: "Other Expenses",
+              financialGoal: "Financial Goal",
+              goalValue: "Goal Value",
+              monthlyExpectedReturn: "Monthly Expected Return (%):",
+              monthlyExpectedReturnPlaceholder: "Enter the monthly expected return",
+              projectionPeriod: "Projection Period",
+              calculate: "Calculate Projection",
+              result: "Projection Result",
+              projectedBalance: "Projected balance after",
+              months: "months",
+              totalInvestmentReturn: "Total investment returns",
+              monthlySummary: "Monthly Summary",
+              totalSalary: "Total Salaries",
+              totalOtherIncome: "Other Income",
+              totalMonthlyExpenses: "Total Monthly Expenses",
+              monthlyBalance: "Monthly Balance",
+              login: "Login",
+              loginWith: "Login with",
+              close: "Close",
+              guideTitle: "User Guide",
+              guideText: "Welcome to the Advanced Family Financial Planner! This site helps you plan your family finances and achieve your financial goals. Follow these steps:",
+              guideStep1: "Enter family members, their salaries, and individual expenses",
+              guideStep2: "Fill in the fixed family expenses",
+              guideStep3: "Add other income and investment returns",
+              guideStep4: "Set your financial goal and projection period",
+              guideStep5: "Click \"Calculate Projection\" to see the results",
+              rentPlaceholder: "Enter rent/mortgage amount",
+              waterPlaceholder: "Enter water bill amount",
+              electricityPlaceholder: "Enter electricity bill amount",
+              phonePlaceholder: "Enter phone bill amount",
+              internetPlaceholder: "Enter internet bill amount",
+              groceriesPlaceholder: "Enter groceries expenses",
+              fuelPlaceholder: "Enter fuel expenses",
+              medicinePlaceholder: "Enter medicine expenses",
+              otherExpensesPlaceholder: "Enter other expenses",
+              financialGoalPlaceholder: "Enter financial goal amount",
+            },
+            ES: {
+              title: "Planificador Financiero Familiar Avanzado",
+              revenue: "Ingresos",
+              salary: "Salario:",
+              annualBonus: "Bonos Anuales:",
+              otherRevenue: "Otros Ingresos:",
+              salaryPlaceholder: "Ingrese el salario mensual",
+              annualBonusPlaceholder: "Ingrese el monto de bonos anuales",
+              otherRevenuePlaceholder: "Ingrese otros ingresos mensuales",
+              fixedExpenses: "Gastos Fijos Familiares",
+              rent: "Alquiler/Hipoteca",
+              water: "Agua",
+              electricity: "Electricidad",
+              phone: "Teléfono",
+              internet: "Internet",
+              groceries: "Supermercado",
+              fuel: "Combustible",
+              medicine: "Medicamentos",
+              otherExpenses: "Otros Gastos",
+              financialGoal: "Objetivo Financiero",
+              goalValue: "Valor del Objetivo",
+              monthlyExpectedReturn: "Rentabilidad Mensual Esperada (%):",
+              monthlyExpectedReturnPlaceholder: "Ingrese la rentabilidad mensual esperada",
+              projectionPeriod: "Período de Proyección",
+              calculate: "Calcular Proyección",
+              result: "Resultado de la Proyección",
+              projectedBalance: "Saldo proyectado después de",
+              months: "meses",
+              totalInvestmentReturn: "Total de rendimentos de inversiones",
+              monthlySummary: "Resumen Mensal",
+              totalSalary: "Total de Salarios",
+              totalOtherIncome: "Otros Ingresos",
+              totalMonthlyExpenses: "Total de Gastos Mensuales",
+              monthlyBalance: "Saldo Mensual",
+              login: "Iniciar Sesión",
+              loginWith: "Iniciar sesión con",
+              close: "Cerrar",
+              guideTitle: "Guía de Uso",
+              guideText: "¡Bienvenido al Planificador Financiero Familiar Avanzado! Este sitio le ayuda a planificar sus finanzas familiares y alcanzar sus objetivos financieros. Siga estos pasos:",
+              guideStep1: "Ingrese los miembros de la familia, sus salarios y gastos individuales",
+              guideStep2: "Complete los gastos fijos familiares",
+              guideStep3: "Agregue otros ingresos y rendimientos de inversiones",
+              guideStep4: "Establezca su objetivo financiero y período de proyección",
+              guideStep5: "Haga clic en \"Calcular Proyección\" para ver los resultados",
+              rentPlaceholder: "Ingrese el monto del alquiler/hipoteca",
+              waterPlaceholder: "Ingrese el monto de la factura de agua",
+              electricityPlaceholder: "Ingrese el monto de la factura de electricidad",
+              phonePlaceholder: "Ingrese el monto de la factura de teléfono",
+              internetPlaceholder: "Ingrese el monto de la factura de internet",
+              groceriesPlaceholder: "Ingrese los gastos de supermercado",
+              fuelPlaceholder: "Ingrese los gastos de combustible",
+              medicinePlaceholder: "Ingrese los gastos de medicamentos",
+              otherExpensesPlaceholder: "Ingrese otros gastos",
+              financialGoalPlaceholder: "Ingrese el monto del objetivo financiero",
+            }
+          };
+    
+          document.addEventListener('DOMContentLoaded', function() {
+            const minimizeButton = document.querySelectorAll('.minimize-button');
+            const guideContent = document.getElementById('guideContent');
+            
+            minimizeButton.forEach(button => {
+              button.addEventListener('click', function() {
+                const section = button.closest('.form-section');
+                section.classList.toggle('minimized');
+                button.textContent = section.classList.contains('minimized') ? '+' : '-';
+              });
+            });
+    
+            changeLanguage('PT');
+          });
+    
+          function changeLanguage(lang) {
+            try {
+              currentLanguage = lang;
+              const languageToggle = document.getElementById('languageToggle');
+              if (languageToggle) {
+                languageToggle.textContent = `🌐 ${lang}`;
+              }
+              
+              document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                  if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.placeholder = translations[lang][key];
+                  } else {
+                    element.textContent = translations[lang][key];
+                  }
+                }
+              });
+    
+              const elements = {
+                salary: document.getElementById('salary'),
+                annualBonus: document.getElementById('annualBonus'),
+                otherRevenue: document.getElementById('otherRevenue'),
+                rent: document.getElementById('rent'),
+                water: document.getElementById('water'),
+                electricity: document.getElementById('electricity'),
+                phone: document.getElementById('phone'),
+                internet: document.getElementById('internet'),
+                groceries: document.getElementById('groceries'),
+                fuel: document.getElementById('fuel'),
+                medicine: document.getElementById('medicine'),
+                otherExpenses: document.getElementById('otherExpenses'),
+                financialGoal: document.getElementById('financialGoal'),
+                monthlyExpectedReturn: document.getElementById('monthlyExpectedReturn')
+              };
+    
+              Object.entries(elements).forEach(([key, element]) => {
+                if (element && translations[lang][`${key}Placeholder`]) {
+                  element.placeholder = translations[lang][`${key}Placeholder`];
+                }
+              });
+            } catch (error) {
+              console.error('Error in changeLanguage function:', error);
+            }
+          }
+    
+          function createChart(fixedExpenses, monthlyData, projectionPeriod, goalAmount, timeToReachGoal) {
+            const ctx = document.getElementById('chart');
+            
+            if (chart) {
+              chart.destroy();
+            }
+    
+            const monthlyRevenue = parseFloat(document.getElementById('salary').value) +
+              (parseFloat(document.getElementById('annualBonus').value) / 12) +
+              parseFloat(document.getElementById('otherRevenue').value);
+    
+            const datasets = [
+              {
+                label: 'Saldo Acumulado',
+                data: monthlyData,
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.1,
+                fill: true
+              },
+              {
+                label: 'Objetivo Financeiro',
+                data: Array(projectionPeriod).fill(goalAmount),
+                borderColor: 'rgb(255, 159, 64)',
+                borderDash: [10, 5],
+                fill: false
+              },
+              {
+                label: 'Gastos Fixos',
+                data: Array(projectionPeriod).fill(Object.values(fixedExpenses).reduce((sum, expense) => sum + expense, 0)),
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderDash: [10, 5],
+                fill: true
+              },
+              {
+                label: 'Receita Financeira Mensal',
+                data: Array(projectionPeriod).fill(monthlyRevenue),
+                borderColor: 'rgb(75, 192, 75)',
+                borderDash: [5, 5],
+                fill: false
+              },
+            ];
+    
+            chart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: Array.from({length: projectionPeriod}, (_, i) => `Mês ${i+1}`),
+                datasets: datasets
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Projeção Financeira Familiar'
+                  },
+                  annotation: {
+                    annotations: {
+                      goalLine: {
+                        type: 'line',
+                        yMin: goalAmount,
+                        yMax: goalAmount,
+                        borderColor: 'rgb(255, 159, 64)',
+                        borderWidth: 2,
+                        label: {
+                          content: 'Objetivo',
+                          enabled: true
+                        }
+                      },
+                      goalAchievement: timeToReachGoal < projectionPeriod ? {
+                        type: 'point',
+                        xValue: timeToReachGoal,
+                        yValue: goalAmount,
+                        backgroundColor: 'rgb(255, 159, 64)',
+                        radius: 10,
+                        label: {
+                          content: 'Objetivo Atingido!',
+                          enabled: true
+                        }
+                      } : undefined
+                    }
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: 'Valores (R$)'
+                    }
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: 'Mês'
+                    },
+                    ticks: {
+                      callback: function(value, index, values) {
+                        return (index % 12 === 0) ? `Ano ${Math.floor(index/12) + 1}` : '';
+                      }
+                    }
+                  }
+                },
+                interaction: {
+                  mode: 'nearest',
+                  axis: 'x',
+                  intersect: false
+                },
+                animation: {
+                  duration: 1000,
+                  easing: 'easeOutQuart'
+                }
+              }
+            });
+          }
+    
+          function openLoginPopup() {
+            document.getElementById('loginPopup').style.display = 'block';
+          }
+    
+          function closeLoginPopup() {
+            document.getElementById('loginPopup').style.display = 'none';
+          }
+    
+          function login(provider) {
+            console.log(`Logging in with ${provider}`);
+            closeLoginPopup();
+          }
+    
+          document.getElementById('loginBtn').addEventListener('click', openLoginPopup);
+    
+          document.getElementById('languageToggle').addEventListener('click', () => {
+            const currentIndex = languages.indexOf(currentLanguage);
+            const nextLanguage = languages[(currentIndex + 1) % languages.length];
+            changeLanguage(nextLanguage);
+          });
+    
+          document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            document.getElementById('themeToggle').textContent = isDarkMode ? '☀️' : '🌙';
+          });
+        });
+      </script>
+    </body>
+    </html>
